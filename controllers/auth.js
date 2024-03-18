@@ -111,8 +111,6 @@ const revalidarToken = async (req, res = response ) => {
 }
 
 
-
-
 module.exports = {
     crearUsuario,
     loginUsuario,

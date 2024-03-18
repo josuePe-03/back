@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const UsuarioSchema = Schema({
-    name: {
+    nombre: {
         type: String,
         required: true
     },
@@ -15,6 +15,14 @@ const UsuarioSchema = Schema({
         required: true
     },
     rol: {
+        type: String,
+        required: true
+    },
+    is_delete:{
+        type:Boolean,
+        required:true
+    },
+    fecha_creacion:{
         type: String,
         required: true
     }
