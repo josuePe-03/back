@@ -42,6 +42,7 @@ const crearOperador = async (req, res = response) => {
       edad,
       unidad_medica,
       is_delete,
+      user:usuarioCreate._id
     });
     await operador.save();
 
@@ -94,14 +95,21 @@ const actualizarOperador = async (req, res = response) => {
 };
 
 const obtenerOperadores = async (req, res = response) => {
+
   try {
-    const operadores = await Operador.find({ is_delete: false });
+    const operadores = await Operador.find({ is_delete: false }).populate('user',{
+      email:1
+    });
+
     if (operadores.length === 0) {
-      return res.status(404).json({
+      return res.json({
         ok: false,
         msg: "Sin operadores existentes",
+
       });
     }
+
+
 
     res.json({
       ok: true,
@@ -153,6 +161,7 @@ const eliminarOperador = async (req, res = response) => {
       _id: operadorId,
       is_delete: false,
     });
+    
     const operador = await Operador.findOne({
       _id: operadorId,
       is_delete: false,

@@ -44,6 +44,7 @@ const crearTecnico = async (req, res = response) => {
       unidad_medica,
       is_delete,
       area,
+      user:usuarioCreate._id
     });
     await tecnico.save();
 
@@ -94,16 +95,17 @@ const actualizarTecnico = async (req, res = response) => {
 
 const obtenerTecnicos = async (req, res = response) => {
   try {
-    const tecnicos = await Tecnico.find({ is_delete: false });
-
+       const tecnicos = await Tecnico.find({ is_delete: false }).populate('user',{
+      email:1
+    });
 
     if (tecnicos.length === 0) {
-      return res.status(404).json({
+      return res.json({
         ok: false,
         msg: "Sin tecnicos existentes",
+
       });
     }
-
     res.json({
       ok: true,
       tecnicos,

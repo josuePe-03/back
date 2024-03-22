@@ -25,7 +25,7 @@ const UsuarioSchema = Schema({
     fecha_creacion:{
         type: String,
         required: true
-    }
+    },
 });
 
 

@@ -1,4 +1,5 @@
 const {Schema,model} = require('mongoose');
+const Usuario = require('./Usuario');
 
 const TecnicoSchema = Schema({
     
@@ -30,6 +31,10 @@ const TecnicoSchema = Schema({
         type:String,
         required:true
     },
+    user: {
+        type: Schema.Types.ObjectId, // Corrección aquí
+        ref: Usuario  
+    }
 });
 
 module.exports = model('Tecnico',TecnicoSchema);

@@ -41,6 +41,7 @@ const crearUsuario = async(req, res = response ) => {
         console.log(error)
         res.status(500).json({
             ok: false,
+            error:error.message,
             msg: 'Por favor hable con el administrador'
         });
     }
@@ -106,6 +107,7 @@ const revalidarToken = async (req, res = response ) => {
     res.json({
         ok: true,
         rol:usuario.rol,
+        uid:uid,
         token
     })
 }

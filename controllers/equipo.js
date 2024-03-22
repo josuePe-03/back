@@ -2,29 +2,23 @@ const { response } = require("express");
 const Equipo = require("../models/Equipo");
 
 const crearEquipo = async (req, res = response) => {
-
-    const {no_serie} = req.body
+  const { no_serie } = req.body;
 
   try {
-
     const equipoEncontrado = await Equipo.findOne({
-        _id: no_serie,
-        is_delete: false,
+      no_serie: no_serie,
+      is_delete: false,
+    });
+
+    if (equipoEncontrado) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Equipo existe en el sistema",
       });
-  
-      if (equipoEncontrado) {
-        return res.status(404).json({
-          ok: false,
-          msg: "Equipo existe en el sistema",
-        });
-      }
+    }
 
-
-    let equipo = new Equipo({
-        ...req.body,
-        _id: req.body.no_serie
-       });
-       await equipo.save();
+    let equipo = new Equipo(req.body);
+    await equipo.save();
 
     res.status(201).json({
       ok: true,
@@ -166,5 +160,5 @@ module.exports = {
   actualizarEquipo,
   obtenerEquipos,
   eliminarEquipo,
-  obtenerEquipo
+  obtenerEquipo,
 };

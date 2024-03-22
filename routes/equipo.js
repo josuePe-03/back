@@ -20,6 +20,8 @@ router.post(
         check('categoria','La categoria es obligatorio').not().isEmpty(),
         check('fecha_instalacion','La fecha de instalacion es obligatorio').not().isEmpty(),
         check('fecha_fabricacion','La fecha de fabricacion es obligatorio').not().isEmpty(),
+        check('fecha_agregado','La fecha agregado es obligatorio').not().isEmpty(),
+        check('id_admin','La id admin es obligatorio').not().isEmpty(),
         validarCampos
     ],
     crearEquipo
