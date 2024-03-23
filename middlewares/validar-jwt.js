@@ -19,14 +19,16 @@ const validarJWT = async (req, res = response, next) => {
     req.uid = uid;
     req.name = name;
 
-    const usuario = await Usuario.findOne({ _id: uid, is_delete: false });
+    // const usuario = await Usuario.findOne({ _id: uid, is_delete: false });
 
-    if (usuario.rol !== "3") {
-      return res.status(401).json({
-        ok: false,
-        msg: "No tienes acceso",
-      });
-    }
+    // if (usuario.rol !== "3") {
+    //   return res.status(401).json({
+    //     ok: false,
+    //     msg: "No tienes acceso",
+    //   });
+    // }
+
+
   } catch (error) {
     return res.status(401).json({
       ok: false,
