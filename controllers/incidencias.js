@@ -6,7 +6,7 @@ const crearIncidencia = async (req, res = response) => {
     let incidencia = new Incidencias(req.body);
     await incidencia.save();
 
-    console.log(incidencia)
+    console.log(incidencia);
 
     res.status(201).json({
       ok: true,
@@ -23,15 +23,17 @@ const crearIncidencia = async (req, res = response) => {
 
 const obtenerIncidencias = async (req, res = response) => {
   try {
-
-    const incidencias = await Incidencias.find().populate('id_equipo',{
-      no_serie:1,
-      marca:1,
-      modelo:1, 
-    }).populate('id_operador',{
-      nombre:1,
-      apellidos:1,
-    });
+    const incidencias = await Incidencias.find()
+      .populate("id_equipo", {
+        no_serie: 1,
+        marca: 1,
+        modelo: 1,
+      })
+      .populate("id_operador", {
+        nombre: 1,
+        apellidos: 1,
+        unidad_medica: 1,
+      });
 
     res.json({
       ok: true,
@@ -47,14 +49,24 @@ const obtenerIncidencias = async (req, res = response) => {
 };
 
 const obtenerIncidencia = async (req, res = response) => {
-  const incidenciaId = req.params.id;
+  const equipoId = req.params.id;
 
   try {
-    const incidencia = await Incidencias.findOne({
-      _id: incidenciaId,
-    });
+    const incidencia = await Incidencias.find({
+      id_equipo: equipoId,
+    })
+      .populate("id_equipo", {
+        no_serie: 1,
+        marca: 1,
+        modelo: 1,
+      })
+      .populate("id_operador", {
+        nombre: 1,
+        apellidos: 1,
+        unidad_medica: 1,
+      });
 
-    if (!incidencia) {
+    if (!equipoId) {
       return res.status(404).json({
         ok: false,
         msg: "La incidencia no existe en el sistema",
@@ -76,7 +88,6 @@ const obtenerIncidencia = async (req, res = response) => {
 
 module.exports = {
   crearIncidencia,
- obtenerIncidencias,
- obtenerIncidencia
- 
+  obtenerIncidencias,
+  obtenerIncidencia,
 };
