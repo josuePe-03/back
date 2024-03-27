@@ -4,7 +4,7 @@ const { check } = require("express-validator");
 //const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require("../middlewares/validar-campos");
 const {
-  crearVisitaIncidencia, obtenerVisitaIncidencias, obtenerVisitasPorIncidencia, obtenerVisita,
+  crearVisitaIncidencia, obtenerVisitaIncidencias, obtenerVisitasPorIncidencia, obtenerVisita, visitaProxima,
 } = require("../controllers/visitaIncidencia");
 
 const router = Router();
@@ -21,9 +21,11 @@ router.get("/obtener-visitas", [], obtenerVisitaIncidencias);
 //Obtener visita x incidencia
 router.get("/obtener-visitas-incidencia/:id", [], obtenerVisitasPorIncidencia);
 
-
 //Obtener visita
 router.get("/obtener-visita/:id", [], obtenerVisita);
+
+//Obtener visita
+router.get("/visita-proxima/:id", [],visitaProxima);
 
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const Tecnico = require('./Tecnico');
 const Incidencias = require('./Incidencias');
+const Equipo = require('./Equipo');
 
 const VisitaIncidenciasSchema = Schema({
     id_incidencia: {
@@ -13,18 +14,26 @@ const VisitaIncidenciasSchema = Schema({
         ref: Tecnico,
         required: true
     },
+    id_equipo: {
+        type: Schema.Types.ObjectId,
+        ref: Equipo,
+    },
     fecha_revisado:{
-        type: String,
+        type: Date,
         required: true,
     },
     fecha_visita: {
-        type: String,
+        type: Date,
         required: true,
     },
     observacion: {
         type: String,
     },
     estado: {
+        type: String,
+        required: true,
+    },
+    title: {
         type: String,
         required: true,
     },

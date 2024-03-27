@@ -6,8 +6,6 @@ const crearIncidencia = async (req, res = response) => {
     let incidencia = new Incidencias(req.body);
     await incidencia.save();
 
-    console.log(incidencia);
-
     res.status(201).json({
       ok: true,
       msg: "¡Incidencia agregada con exito!",

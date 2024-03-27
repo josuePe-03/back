@@ -34,9 +34,6 @@ app.use('/api/operador/incidencia', require('./routes/incidencia'));
 app.use('/api/tecnico/visita-incidencia', require('./routes/visitaIncidencia'));
 
 
-
-
-
 // Escuchar peticiones
 app.listen( process.env.PORT, () => {
     console.log(`Servidor corriendo en puerto ${ process.env.PORT }`);

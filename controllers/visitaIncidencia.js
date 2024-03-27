@@ -1,5 +1,6 @@
 const { response } = require("express");
 const VisitaIncidencia = require("../models/VisitaIncidencia");
+const Incidencias = require("../models/Incidencias");
 
 const crearVisitaIncidencia = async (req, res = response) => {
   try {
@@ -21,23 +22,52 @@ const crearVisitaIncidencia = async (req, res = response) => {
   }
 };
 
+//obtener todas
 const obtenerVisitaIncidencias = async (req, res = response) => {
+   //fecha hoy
+   const today = new Date();
   try {
-    const visitaIncidencias = await VisitaIncidencia.find()
-      .populate("id_incidencia", {
-        id_equipo: 1,
-        tipo_incidencia: 1,
-        detalle: 1,
-        status: 1,
+    const visita = await VisitaIncidencia.find({
+      estado: "Pendiente",
+      fecha_visita: { $gt: today },
+    })
+      .populate({
+        path: "id_incidencia",
+        select: {
+          id_equipo: 1,
+          tipo_incidencia: 1,
+          detalle: 1,
+          status: 1,
+        },
+        populate: {
+          path: "id_equipo",
+          select: {
+            id_equipo: 1,
+            marca: 1,
+            modelo: 1,
+          },
+        },
       })
       .populate("id_tecnico", {
         nombre: 1,
         apellidos: 1,
+      })
+      .sort({ fecha_visita: 1 }); // Sort by fecha_visita in ascending order
+
+    if (!visita) {
+      return res.status(404).json({
+        ok: false,
+        msg: "No hay visitas no existe en el sistema",
       });
+    }
+
+    //CONVERTIR ARREGLO
+    // Assuming visita_proxima is the result of your query or operation
+    const visitaArray = Array.isArray(visita) ? visita : [visita];
 
     res.json({
       ok: true,
-      visitaIncidencias,
+      visitas: visitaArray,
     });
   } catch (error) {
     console.log(error);
@@ -128,9 +158,79 @@ const obtenerVisita = async (req, res = response) => {
   }
 };
 
+//Obtener datos de la visita
+const visitaProxima = async (req, res = response) => {
+  const operadorId = req.params.id;
+
+  const incidenciaIds = await Incidencias.find(
+    { id_operador: operadorId },
+    { _id: 1 }
+  );
+
+  const incidenciaIdsArray = incidenciaIds.map((doc) => doc._id);
+
+  //fecha hoy
+  const today = new Date();
+
+  try {
+    const visita_proxima = await VisitaIncidencia.findOne({
+      id_incidencia: { $in: incidenciaIdsArray },
+      estado: "Pendiente",
+      fecha_visita: { $gt: today },
+    })
+      .populate({
+        path: "id_incidencia",
+        select: {
+          id_equipo: 1,
+          tipo_incidencia: 1,
+          detalle: 1,
+          status: 1,
+        },
+        populate: {
+          path: "id_equipo",
+          select: {
+            id_equipo: 1,
+            marca: 1,
+            modelo: 1,
+          },
+        },
+      })
+      .populate("id_tecnico", {
+        nombre: 1,
+        apellidos: 1,
+      })
+      .sort({ fecha_visita: 1 }); // Sort by fecha_visita in ascending order
+
+    if (!operadorId) {
+      return res.status(404).json({
+        ok: false,
+        msg: "La operador no existe en el sistema",
+      });
+    }
+
+    //CONVERTIR ARREGLO
+    // Assuming visita_proxima is the result of your query or operation
+    const visita_proximaArray = Array.isArray(visita_proxima)
+      ? visita_proxima
+      : [visita_proxima];
+
+    res.json({
+      ok: true,
+      visita_proxima: visita_proximaArray,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 module.exports = {
   crearVisitaIncidencia,
   obtenerVisitaIncidencias,
   obtenerVisitasPorIncidencia,
   obtenerVisita,
+  visitaProxima,
 };
