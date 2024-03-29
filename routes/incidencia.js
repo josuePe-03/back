@@ -7,6 +7,7 @@ const {
   crearIncidencia,
   obtenerIncidencias,
   obtenerIncidencia,
+  terminarIncidencia,
 } = require("../controllers/incidencias");
 
 const router = Router();
@@ -22,5 +23,9 @@ router.get("/obtener-incidencias", [], obtenerIncidencias);
 
 // Obtener incidencia
 router.get("/obtener-incidencia/:id", [], obtenerIncidencia);
+
+//TERMINAR INCIDENCIA
+router.put("/terminar-incidencia/:id", [], terminarIncidencia);
+
 
 module.exports = router;

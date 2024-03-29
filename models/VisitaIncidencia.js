@@ -14,6 +14,10 @@ const VisitaIncidenciasSchema = Schema({
         ref: Tecnico,
         required: true
     },
+    id_tecnicoAsignado: {
+        type: String,
+        ref: Tecnico,
+    },
     id_equipo: {
         type: Schema.Types.ObjectId,
         ref: Equipo,
@@ -24,7 +28,6 @@ const VisitaIncidenciasSchema = Schema({
     },
     fecha_visita: {
         type: Date,
-        required: true,
     },
     observacion: {
         type: String,

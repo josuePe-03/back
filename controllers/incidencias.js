@@ -84,8 +84,45 @@ const obtenerIncidencia = async (req, res = response) => {
   }
 };
 
+//CONCLUIR INCIDENCIA
+const terminarIncidencia = async (req, res = response) => {
+  const incidenciaId = req.params.id;
+
+  try {
+    const incidencia = await Incidencias.findOne({
+      _id: incidenciaId,
+    });
+
+    if (!incidencia) {
+      return res.status(404).json({
+        ok: false,
+        msg: "La incidencia no existe en el sistema",
+      });
+    }
+
+
+    const terminarIncidencia = {
+      estado:"Concluido"
+     };
+
+     await Incidencias.findByIdAndUpdate(incidenciaId, terminarIncidencia, { new: true });
+
+    res.json({
+      ok: true,
+      msg: "¡Incidencia Concluida Correctamente!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 module.exports = {
   crearIncidencia,
   obtenerIncidencias,
   obtenerIncidencia,
+  terminarIncidencia
 };
