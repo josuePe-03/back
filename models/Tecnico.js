@@ -28,7 +28,7 @@ const TecnicoSchema = Schema({
         required:true
     },
     area:{
-        type:String,
+        type:[String],
         required:true
     },
     user: {

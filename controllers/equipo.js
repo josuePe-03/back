@@ -83,13 +83,6 @@ const obtenerEquipos = async (req, res = response) => {
       ? (categoria = [...genreOptions])
       : (categoria = req.query.categoria.split(","));
 
-    // let sortBy = {};
-    // if (sort[1]) {
-    // 	sortBy[sort[0]] = sort[1];
-    // } else {
-    // 	sortBy[sort[0]] = "asc";
-    // }
-
     const equipos = await Equipo.find({
       modelo: { $regex: search, $options: "i" },
       is_delete: false,

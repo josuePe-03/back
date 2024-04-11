@@ -12,7 +12,7 @@ const { crearOperador,actualizarOperador,obtenerOperadores,eliminarOperador,obte
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
-router.use( validarJWT );
+//router.use( validarJWT );
 
 router.post(
     '/agregar-operador', 
