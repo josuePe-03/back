@@ -92,7 +92,9 @@ const obtenerEquipos = async (req, res = response) => {
 
     const equipos = await Equipo.find({
       modelo: { $regex: search, $options: "i" },
+      is_delete: false,
     })
+    
       .where("categoria")
       .in([...categoria])
       .skip(page * limit)
@@ -101,6 +103,7 @@ const obtenerEquipos = async (req, res = response) => {
     const total = await Equipo.countDocuments({
       categoria: { $in: [...categoria] },
       modelo: { $regex: search, $options: "i" },
+      is_delete: false,
     });
 
     const response = {
