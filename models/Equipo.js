@@ -11,7 +11,7 @@ const EquipoMedicoSchema = Schema({
     required: true,
   },
   categoria: {
-    type: String,
+    type: [String],
 
     required: true,
   },
