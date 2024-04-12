@@ -14,7 +14,7 @@ const IncidenciasSchema = Schema({
         required: true
     },
     tipo_incidencia: {
-        type: String,
+        type: [String],
         required: true,
     },
     detalle: {
@@ -26,11 +26,15 @@ const IncidenciasSchema = Schema({
         required: true,
     },
     status: {
-        type: String,
+        type: [String],
         required: true
     },
     estado: {
         type: String,
+        required: true
+    },
+    is_delete: {
+        type: Boolean,
         required: true
     },
 });

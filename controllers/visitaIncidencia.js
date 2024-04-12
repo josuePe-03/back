@@ -31,7 +31,6 @@ const crearVisitaIncidencia = async (req, res = response) => {
       new: true,
     });
 
-
     res.status(201).json({
       ok: true,
       msg: "¡Visita agregada con exito!",
@@ -47,15 +46,18 @@ const crearVisitaIncidencia = async (req, res = response) => {
 
 //obtener todas
 const obtenerVisitaIncidencias = async (req, res = response) => {
-  //fecha hoy
-  const today = new Date();
-
   try {
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 4;
+    const search = req.query.search || "";
+
     const visita = await VisitaIncidencia.find({
       estado: "Visita Pendiente",
+
     })
       .populate({
         path: "id_incidencia",
+
         select: {
           id_equipo: 1,
           tipo_incidencia: 1,
@@ -66,7 +68,6 @@ const obtenerVisitaIncidencias = async (req, res = response) => {
           {
             path: "id_equipo",
             select: {
-              id_equipo: 1,
               marca: 1,
               modelo: 1,
               no_serie: 1,
@@ -85,23 +86,31 @@ const obtenerVisitaIncidencias = async (req, res = response) => {
         nombre: 1,
         apellidos: 1,
       })
+      .skip(page * limit)
+      .limit(limit)
       .sort({ fecha_visita: 1 }); // Sort by fecha_visita in ascending order
 
-    if (!visita) {
-      return res.status(404).json({
+
+    const total = await VisitaIncidencia.countDocuments({
+      estado: "Visita Pendiente",
+    });
+
+    //VALIDACION EXISTENCIA
+    if (!visita || visita.length === 0) {
+      return res.json({
         ok: false,
-        msg: "No hay visitas no existe en el sistema",
+        msg: "Sin visitas existentes",
       });
     }
-
-    //CONVERTIR ARREGLO
-    // Assuming visita_proxima is the result of your query or operation
-    const visitaArray = Array.isArray(visita) ? visita : [visita];
-
-    res.json({
+    const response = {
       ok: true,
-      visitas: visitaArray,
-    });
+      total,
+      page: page + 1,
+      limit,
+      visita,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -129,7 +138,6 @@ const obtenerVisitasPorIncidencia = async (req, res = response) => {
         nombre: 1,
         apellidos: 1,
       });
-
 
     if (!visita_incidenciaId) {
       return res.status(404).json({
@@ -199,6 +207,7 @@ const visitaProxima = async (req, res = response) => {
     { _id: 1 }
   );
   const incidenciaIdsArray = incidenciaIds.map((doc) => doc._id);
+
 
   //fecha hoy
   const today = new Date();

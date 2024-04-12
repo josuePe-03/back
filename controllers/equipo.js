@@ -87,7 +87,6 @@ const obtenerEquipos = async (req, res = response) => {
       modelo: { $regex: search, $options: "i" },
       is_delete: false,
     })
-    
       .where("categoria")
       .in([...categoria])
       .skip(page * limit)
@@ -98,6 +97,14 @@ const obtenerEquipos = async (req, res = response) => {
       modelo: { $regex: search, $options: "i" },
       is_delete: false,
     });
+
+    //VALIDACION EXISTENCIA
+    if (!equipos || equipos.length === 0) {
+      return res.json({
+        ok: false,
+        msg: "Sin equipos existentes",
+      });
+    }
 
     const response = {
       ok: true,

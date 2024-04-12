@@ -98,13 +98,13 @@ const obtenerTecnicos = async (req, res = response) => {
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
-    let area = req.query.categoria || "All";
+    let area = req.query.area || "All";
 
     const genreOptions = ["Mecanico", "Electricista", "General"];
 
     area === "All"
       ? (area = [...genreOptions])
-      : (area = req.query.categoria.split(","));
+      : (area = req.query.area.split(","));
 
     const tecnicos = await Tecnico.find({
       nombre: { $regex: search, $options: "i" },
