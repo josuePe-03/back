@@ -20,7 +20,6 @@ app.use( express.json() );
 
 // Rutas
 app.use('/api/auth', require('./routes/auth') );
-app.use('/api/events', require('./routes/events') );
 
 //ADMIN
 app.use('/api/admin/operador', require('./routes/operador'));
