@@ -139,10 +139,11 @@ const obtenerVisitasPorIncidencia = async (req, res = response) => {
         apellidos: 1,
       });
 
-    if (!visita_incidenciaId) {
-      return res.status(404).json({
+
+    if (!visita_incidencia || visita_incidencia.length === 0) {
+      return res.json({
         ok: false,
-        msg: "La incidencia no existe en el sistema",
+        msg: "Sin visitas",
       });
     }
 
