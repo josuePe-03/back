@@ -3,6 +3,9 @@ require('dotenv').config();
 const cors = require('cors');
 const { dbConnection } = require('./database/config');
 
+const SERVER_HOST = process.env.SERVER_HOST;
+const SERVER_PORT = process.env.SERVER_PORT;
+
 // Crear el servidor de express
 const app = express();
 
@@ -33,11 +36,9 @@ app.use('/api/operador/incidencia', require('./routes/incidencia'));
 app.use('/api/tecnico/visita-incidencia', require('./routes/visitaIncidencia'));
 
 
-// Escuchar peticiones
-app.listen( process.env.PORT, () => {
-    console.log(`Servidor corriendo en puerto ${ process.env.PORT }`);
-});
 
+
+app.listen(SERVER_PORT, SERVER_HOST);
 
 
 
