@@ -38,7 +38,9 @@ app.use('/api/tecnico/visita-incidencia', require('./routes/visitaIncidencia'));
 
 
 
-app.listen(SERVER_PORT, SERVER_HOST);
+app.listen(SERVER_PORT, SERVER_HOST,()=>{
+    console.log(`Servidor corriendo en puerto ${ SERVER_PORT }`);
+});
 
 
 

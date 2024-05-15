@@ -1,10 +1,38 @@
 const { response } = require("express");
 const Incidencias = require("../models/Incidencias");
+const { Resend } = require("resend");
+const Operador = require("../models/Operador");
+
+const resend = new Resend(process.env.KEY_RESEND);
 
 const crearIncidencia = async (req, res = response) => {
+
+  const {id_operador,detalle, id_equipo,status,ubicacion,fecha_registrada,tipo_incidencia} = req.body
+
   try {
-    let incidencia = new Incidencias(req.body);
-    await incidencia.save();
+
+    //OBTENER CORREO DEL OPERADOR
+    const usuario = await Operador.findOne({
+      _id:id_operador
+    })
+    .populate({
+      path: "user",
+      select: {email:1}
+    })
+
+     let incidencia = new Incidencias(req.body);
+     await incidencia.save();
+
+     const { data, error } = await resend.emails.send({
+       from: "Acmen <onboarding@resend.dev>",
+       to: ["josuepe03@hotmail.com"],
+       subject: "REPORTE INCIDENCIA",
+       html: `<strong>El dia${fecha_registrada} el equipo ${id_equipo} reporto una incidencia tipo ${tipo_incidencia} de status ${status} en la ubicacion ${ubicacion}</strong>`,
+     });
+
+     if (error) {
+       return res.status(400).json({ error });
+     }
 
     res.status(201).json({
       ok: true,
@@ -59,7 +87,7 @@ const obtenerIncidencias = async (req, res = response) => {
     const total = await Incidencias.countDocuments({
       tipo_incidencia: { $in: [...tipo_incidencia] },
       is_delete: false,
-    })
+    });
 
     //VALIDACION EXISTENCIA
     if (!filteredIncidencias || filteredIncidencias.length === 0) {
@@ -69,10 +97,9 @@ const obtenerIncidencias = async (req, res = response) => {
       });
     }
 
-
     const response = {
       ok: true,
-      total:total,
+      total: total,
       page: page + 1,
       limit,
       tipo_incidencia: genreOptions,
