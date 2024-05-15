@@ -44,7 +44,7 @@ const crearTecnico = async (req, res = response) => {
       unidad_medica,
       is_delete,
       area,
-      user:usuarioCreate._id
+      user: usuarioCreate._id,
     });
     await tecnico.save();
 
@@ -95,22 +95,53 @@ const actualizarTecnico = async (req, res = response) => {
 
 const obtenerTecnicos = async (req, res = response) => {
   try {
-       const tecnicos = await Tecnico.find({ is_delete: false }).populate('user',{
-      email:1
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 4;
+    const search = req.query.search || "";
+    let area = req.query.area || "All";
+
+    const genreOptions = ["Mecanico", "Electricista", "General"];
+
+    area === "All"
+      ? (area = [...genreOptions])
+      : (area = req.query.area.split(","));
+
+    const tecnicos = await Tecnico.find({
+      nombre: { $regex: search, $options: "i" },
+      is_delete: false,
+    })
+      .populate("user", {
+        email: 1,
+      })
+      .where("area")
+      .in([...area])
+      .skip(page * limit)
+      .limit(limit);
+
+    const total = await Tecnico.countDocuments({
+      area: { $in: [...area] },
+
+      nombre: { $regex: search, $options: "i" },
+      is_delete: false,
     });
 
-    if (tecnicos.length === 0) {
+    //VALIDACION EXISTENCIA
+    if (!tecnicos || tecnicos.length === 0) {
       return res.json({
         ok: false,
         msg: "Sin tecnicos existentes",
-
       });
     }
-    res.json({
-      ok: true,
-      tecnicos,
-    });
 
+    const response = {
+      ok: true,
+      total,
+      page: page + 1,
+      limit,
+      areas: genreOptions,
+      tecnicos,
+    };
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     res.status(500).json({

@@ -12,7 +12,6 @@ const EquipoMedicoSchema = Schema({
   },
   categoria: {
     type: [String],
-
     required: true,
   },
   fecha_fabricacion: {

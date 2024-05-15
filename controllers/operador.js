@@ -42,7 +42,7 @@ const crearOperador = async (req, res = response) => {
       edad,
       unidad_medica,
       is_delete,
-      user:usuarioCreate._id
+      user: usuarioCreate._id,
     });
     await operador.save();
 
@@ -95,26 +95,44 @@ const actualizarOperador = async (req, res = response) => {
 };
 
 const obtenerOperadores = async (req, res = response) => {
-
   try {
-    const operadores = await Operador.find({ is_delete: false }).populate('user',{
-      email:1
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 4;
+    const search = req.query.search || "";
+
+    const operadores = await Operador.find({
+      nombre: { $regex: search, $options: "i" },
+      is_delete: false,
+    })
+      .populate("user", {
+        email: 1,
+      })
+      .skip(page * limit)
+      .limit(limit);
+
+    const total = await Operador.countDocuments({
+      nombre: { $regex: search, $options: "i" },
+      is_delete: false,
     });
 
-    if (operadores.length === 0) {
+    //VALIDACION EXISTENCIA
+    //VALIDACION EXISTENCIA
+    if (!operadores || operadores.length === 0) {
       return res.json({
         ok: false,
         msg: "Sin operadores existentes",
-
       });
     }
 
 
-
-    res.json({
+    const response = {
       ok: true,
+      total,
+      page: page + 1,
+      limit,
       operadores,
-    });
+    };
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -161,7 +179,7 @@ const eliminarOperador = async (req, res = response) => {
       _id: operadorId,
       is_delete: false,
     });
-    
+
     const operador = await Operador.findOne({
       _id: operadorId,
       is_delete: false,
@@ -203,5 +221,5 @@ module.exports = {
   actualizarOperador,
   obtenerOperadores,
   eliminarOperador,
-  obtenerOperador
+  obtenerOperador,
 };

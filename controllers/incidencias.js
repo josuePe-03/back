@@ -19,24 +19,67 @@ const crearIncidencia = async (req, res = response) => {
   }
 };
 
+// OBTENER INCIDENCIAS
+
 const obtenerIncidencias = async (req, res = response) => {
   try {
-    const incidencias = await Incidencias.find()
-      .populate("id_equipo", {
-        no_serie: 1,
-        marca: 1,
-        modelo: 1,
-      })
-      .populate("id_operador", {
-        nombre: 1,
-        apellidos: 1,
-        unidad_medica: 1,
-      });
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 4;
+    const search = req.query.search || "";
+    let tipo_incidencia = req.query.tipo_incidencia || "All";
 
-    res.json({
+    const genreOptions = ["Predictiva", "Correctiva", "Preventiva"];
+
+    tipo_incidencia === "All"
+      ? (tipo_incidencia = [...genreOptions])
+      : (tipo_incidencia = req.query.tipo_incidencia.split(","));
+
+    const incidencias = await Incidencias.find({
+      is_delete: false,
+    })
+      .populate({
+        path: "id_equipo",
+        match: { modelo: { $regex: search, $options: "i" } },
+        select: { no_serie: 1, marca: 1, modelo: 1 },
+      })
+      .populate({
+        path: "id_operador",
+        select: { nombre: 1, apellidos: 1, unidad_medica: 1 },
+      })
+      .where("tipo_incidencia")
+      .in([...tipo_incidencia])
+      .skip(page * limit)
+      .limit(limit);
+
+    // Filter out incidencias where id_equipo is null or empty
+    const filteredIncidencias = incidencias.filter(
+      (incidencia) => incidencia.id_equipo
+    );
+
+    const total = await Incidencias.countDocuments({
+      tipo_incidencia: { $in: [...tipo_incidencia] },
+      is_delete: false,
+    })
+
+    //VALIDACION EXISTENCIA
+    if (!filteredIncidencias || filteredIncidencias.length === 0) {
+      return res.json({
+        ok: false,
+        msg: "Sin incidencias existentes",
+      });
+    }
+
+
+    const response = {
       ok: true,
-      incidencias,
-    });
+      total:total,
+      page: page + 1,
+      limit,
+      tipo_incidencia: genreOptions,
+      incidencias: filteredIncidencias,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -46,6 +89,7 @@ const obtenerIncidencias = async (req, res = response) => {
   }
 };
 
+// Incidencias por equipo
 const obtenerIncidencia = async (req, res = response) => {
   const equipoId = req.params.id;
 
@@ -100,12 +144,13 @@ const terminarIncidencia = async (req, res = response) => {
       });
     }
 
-
     const terminarIncidencia = {
-      estado:"Concluido"
-     };
+      estado: "Concluido",
+    };
 
-     await Incidencias.findByIdAndUpdate(incidenciaId, terminarIncidencia, { new: true });
+    await Incidencias.findByIdAndUpdate(incidenciaId, terminarIncidencia, {
+      new: true,
+    });
 
     res.json({
       ok: true,
@@ -124,5 +169,5 @@ module.exports = {
   crearIncidencia,
   obtenerIncidencias,
   obtenerIncidencia,
-  terminarIncidencia
+  terminarIncidencia,
 };
