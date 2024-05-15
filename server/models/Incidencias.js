@@ -33,6 +33,10 @@ const IncidenciasSchema = Schema({
         type: String,
         required: true
     },
+    ubicacion: {
+        type: String,
+        required: true
+    },
     is_delete: {
         type: Boolean,
         required: true
