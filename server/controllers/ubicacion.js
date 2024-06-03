@@ -1,15 +1,19 @@
 const { response } = require("express");
 const Ubicacion = require("../models/Ubicacion");
+const Usuario = require("../models/Usuario");
+
 const { model } = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const crearUbicacion = async (req, res = response) => {
-  const { piso, no_sala } = req.body;
+  const { piso, no_sala, centro_medico } = req.body;
 
   try {
     // Utiliza findOne en lugar de find para buscar una ubicación específica
     const ubicacionEncontrada = await Ubicacion.findOne({
       no_sala: no_sala,
       piso: piso,
+      centro_medico: centro_medico,
     });
 
     // Verifica si la ubicación ya existe
@@ -39,10 +43,21 @@ const crearUbicacion = async (req, res = response) => {
   }
 };
 
-
 const obtenerUbicaciones = async (req, res = response) => {
+
   try {
-    const ubicaciones = await Ubicacion.find({});
+
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+  
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+    
+    const ubicaciones = await Ubicacion.find({
+      centro_medico:usuario.centro_medico
+    });
 
     //VALIDACION EXISTENCIA
     if (!ubicaciones || ubicaciones.length === 0) {

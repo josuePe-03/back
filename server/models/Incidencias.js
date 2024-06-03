@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const Equipo = require('./Equipo');
 const Operador = require('./Operador');
+const CentroMedico = require('./CentroMedico');
 
 const IncidenciasSchema = Schema({
     id_equipo: {
@@ -41,6 +42,10 @@ const IncidenciasSchema = Schema({
         type: Boolean,
         required: true
     },
+    centro_medico: {
+        type: Schema.Types.ObjectId, // Corrección aquí
+        ref: CentroMedico
+    }
 });
 
 module.exports = model('Incidencias', IncidenciasSchema);

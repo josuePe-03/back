@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const CentroMedico = require('./CentroMedico');
 
 const UsuarioSchema = Schema({
     nombre: {
@@ -26,6 +27,10 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    centro_medico: {
+        type: Schema.Types.ObjectId, // Corrección aquí
+        ref: CentroMedico
+    }
 });
 
 

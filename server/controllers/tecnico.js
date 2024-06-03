@@ -1,7 +1,11 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
+
 const Usuario = require("../models/Usuario");
 const Tecnico = require("../models/Tecnico");
+
+const jwt = require("jsonwebtoken");
+
 
 const crearTecnico = async (req, res = response) => {
   const {
@@ -14,6 +18,7 @@ const crearTecnico = async (req, res = response) => {
     unidad_medica,
     is_delete,
     area,
+    centro_medico,
   } = req.body;
 
   try {
@@ -45,12 +50,14 @@ const crearTecnico = async (req, res = response) => {
       is_delete,
       area,
       user: usuarioCreate._id,
+      centro_medico,
     });
     await tecnico.save();
 
     res.status(201).json({
       ok: true,
       msg: "¡Tecnico creado con exito!",
+      tecnico,
     });
   } catch (error) {
     console.log(error);
@@ -95,6 +102,15 @@ const actualizarTecnico = async (req, res = response) => {
 
 const obtenerTecnicos = async (req, res = response) => {
   try {
+
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
@@ -109,6 +125,7 @@ const obtenerTecnicos = async (req, res = response) => {
     const tecnicos = await Tecnico.find({
       nombre: { $regex: search, $options: "i" },
       is_delete: false,
+      centro_medico:usuario.centro_medico,
     })
       .populate("user", {
         email: 1,
@@ -120,7 +137,7 @@ const obtenerTecnicos = async (req, res = response) => {
 
     const total = await Tecnico.countDocuments({
       area: { $in: [...area] },
-
+      centro_medico:usuario.centro_medico,
       nombre: { $regex: search, $options: "i" },
       is_delete: false,
     });

@@ -2,12 +2,15 @@ const { response } = require("express");
 const Equipo = require("../models/Equipo");
 const { model } = require("mongoose");
 
+const Usuario = require("../models/Usuario");
+const jwt = require("jsonwebtoken");
+
 const crearEquipo = async (req, res = response) => {
-  const { no_serie } = req.body;
+  const { no_serie, centro_medico } = req.body;
 
   try {
     const equipoEncontrado = await Equipo.findOne({
-      no_serie: no_serie,
+      centro_medico: centro_medico,
       is_delete: false,
     });
 
@@ -24,6 +27,7 @@ const crearEquipo = async (req, res = response) => {
     res.status(201).json({
       ok: true,
       msg: "¡Equipo agregado con exito!",
+      equipo,
     });
   } catch (error) {
     console.log(error);
@@ -71,6 +75,14 @@ const actualizarEquipo = async (req, res = response) => {
 
 const obtenerEquipos = async (req, res = response) => {
   try {
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
@@ -84,6 +96,7 @@ const obtenerEquipos = async (req, res = response) => {
       : (categoria = req.query.categoria.split(","));
 
     const equipos = await Equipo.find({
+      centro_medico:usuario.centro_medico,
       modelo: { $regex: search, $options: "i" },
       is_delete: false,
     })
@@ -95,6 +108,7 @@ const obtenerEquipos = async (req, res = response) => {
     const total = await Equipo.countDocuments({
       categoria: { $in: [...categoria] },
       modelo: { $regex: search, $options: "i" },
+      centro_medico:usuario.centro_medico,
       is_delete: false,
     });
 

@@ -1,7 +1,10 @@
 const { Schema, model } = require("mongoose");
+const CentroMedico = require("./CentroMedico");
 
 const EquipoMedicoSchema = Schema({
-  no_serie: { type: String, required: true, unique: true },
+  no_serie: { 
+    type: String, 
+    required: true },
   marca: {
     type: String,
     required: true,
@@ -33,6 +36,10 @@ const EquipoMedicoSchema = Schema({
   is_delete: {
     type: Boolean,
     required: true,
+  },
+  centro_medico: {
+    type: Schema.Types.ObjectId, // Corrección aquí
+    ref: CentroMedico,
   },
 });
 

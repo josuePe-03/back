@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
 const Operador = require("../models/Operador");
 
+const jwt = require("jsonwebtoken");
+
 const crearOperador = async (req, res = response) => {
   const {
     email,
@@ -13,6 +15,7 @@ const crearOperador = async (req, res = response) => {
     edad,
     unidad_medica,
     is_delete,
+    centro_medico,
   } = req.body;
 
   try {
@@ -43,12 +46,14 @@ const crearOperador = async (req, res = response) => {
       unidad_medica,
       is_delete,
       user: usuarioCreate._id,
+      centro_medico,
     });
     await operador.save();
 
     res.status(201).json({
       ok: true,
       msg: "¡Operador creado con exito!",
+      operador,
     });
   } catch (error) {
     console.log(error);
@@ -96,6 +101,14 @@ const actualizarOperador = async (req, res = response) => {
 
 const obtenerOperadores = async (req, res = response) => {
   try {
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
@@ -103,6 +116,7 @@ const obtenerOperadores = async (req, res = response) => {
     const operadores = await Operador.find({
       nombre: { $regex: search, $options: "i" },
       is_delete: false,
+      centro_medico:usuario.centro_medico,
     })
       .populate("user", {
         email: 1,
@@ -113,9 +127,9 @@ const obtenerOperadores = async (req, res = response) => {
     const total = await Operador.countDocuments({
       nombre: { $regex: search, $options: "i" },
       is_delete: false,
+      centro_medico:usuario.centro_medico,
     });
 
-    //VALIDACION EXISTENCIA
     //VALIDACION EXISTENCIA
     if (!operadores || operadores.length === 0) {
       return res.json({
@@ -123,7 +137,6 @@ const obtenerOperadores = async (req, res = response) => {
         msg: "Sin operadores existentes",
       });
     }
-
 
     const response = {
       ok: true,

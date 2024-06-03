@@ -24,8 +24,8 @@ const crearIncidencia = async (req, res = response) => {
      await incidencia.save();
 
      const { data, error } = await resend.emails.send({
-       from: "Acmen <onboarding@resend.dev>",
-       to: ["josuepe03@hotmail.com"],
+       from: "josueperez03@josuepedev.com",
+       to: ["josuepe03@hotmail.com","josueperezeulogio3@gmail.com","elmichito210119@gmail.com"],
        subject: "REPORTE INCIDENCIA",
        html: `<strong>El dia${fecha_registrada} el equipo ${id_equipo} reporto una incidencia tipo ${tipo_incidencia} de status ${status} en la ubicacion ${ubicacion}</strong>`,
      });

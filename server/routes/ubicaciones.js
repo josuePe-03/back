@@ -25,7 +25,7 @@ router.post(
 );
 
 // Obtener tecnicos
-router.get(
+router.get( 
     '/obtener-ubicaciones', 
     [
 
