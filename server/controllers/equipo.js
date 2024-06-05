@@ -11,6 +11,7 @@ const crearEquipo = async (req, res = response) => {
   try {
     const equipoEncontrado = await Equipo.findOne({
       centro_medico: centro_medico,
+      no_serie:no_serie,
       is_delete: false,
     });
 

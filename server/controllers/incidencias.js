@@ -1,42 +1,56 @@
 const { response } = require("express");
-const Incidencias = require("../models/Incidencias");
 const { Resend } = require("resend");
+
+const Incidencias = require("../models/Incidencias");
 const Operador = require("../models/Operador");
+
+const Usuario = require("../models/Usuario");
+const jwt = require("jsonwebtoken");
 
 const resend = new Resend(process.env.KEY_RESEND);
 
 const crearIncidencia = async (req, res = response) => {
-
-  const {id_operador,detalle, id_equipo,status,ubicacion,fecha_registrada,tipo_incidencia} = req.body
+  const {
+    id_operador,
+    detalle,
+    id_equipo,
+    status,
+    ubicacion,
+    fecha_registrada,
+    tipo_incidencia,
+  } = req.body;
 
   try {
-
     //OBTENER CORREO DEL OPERADOR
     const usuario = await Operador.findOne({
-      _id:id_operador
-    })
-    .populate({
+      _id: id_operador,
+    }).populate({
       path: "user",
-      select: {email:1}
-    })
+      select: { email: 1 },
+    });
 
-     let incidencia = new Incidencias(req.body);
-     await incidencia.save();
+    let incidencia = new Incidencias(req.body);
+    await incidencia.save();
 
-     const { data, error } = await resend.emails.send({
-       from: "josueperez03@josuepedev.com",
-       to: ["josuepe03@hotmail.com","josueperezeulogio3@gmail.com","elmichito210119@gmail.com"],
-       subject: "REPORTE INCIDENCIA",
-       html: `<strong>El dia${fecha_registrada} el equipo ${id_equipo} reporto una incidencia tipo ${tipo_incidencia} de status ${status} en la ubicacion ${ubicacion}</strong>`,
-     });
+    const { data, error } = await resend.emails.send({
+      from: "josueperez03@josuepedev.com",
+      to: [
+        "josuepe03@hotmail.com",
+        "josueperezeulogio3@gmail.com",
+        "elmichito210119@gmail.com",
+      ],
+      subject: "REPORTE INCIDENCIA",
+      html: `<strong>El dia${fecha_registrada} el equipo ${id_equipo} reporto una incidencia tipo ${tipo_incidencia} de status ${status} en la ubicacion ${ubicacion}</strong>`,
+    });
 
-     if (error) {
-       return res.status(400).json({ error });
-     }
+    if (error) {
+      return res.status(400).json({ error });
+    }
 
     res.status(201).json({
       ok: true,
       msg: "¡Incidencia agregada con exito!",
+      incidencia,
     });
   } catch (error) {
     console.log(error);
@@ -51,6 +65,14 @@ const crearIncidencia = async (req, res = response) => {
 
 const obtenerIncidencias = async (req, res = response) => {
   try {
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
@@ -64,6 +86,7 @@ const obtenerIncidencias = async (req, res = response) => {
 
     const incidencias = await Incidencias.find({
       is_delete: false,
+      centro_medico:usuario.centro_medico,
     })
       .populate({
         path: "id_equipo",
@@ -87,6 +110,7 @@ const obtenerIncidencias = async (req, res = response) => {
     const total = await Incidencias.countDocuments({
       tipo_incidencia: { $in: [...tipo_incidencia] },
       is_delete: false,
+      centro_medico:usuario.centro_medico,
     });
 
     //VALIDACION EXISTENCIA

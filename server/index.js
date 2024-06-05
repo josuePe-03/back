@@ -37,7 +37,8 @@ app.use('/api/incidencia', require('./routes/incidencia'));
 //TECNICO
 app.use('/api/visita-incidencia', require('./routes/visitaIncidencia'));
 
-
+//TECNICO
+app.use('/api/super-admin', require('./routes/superAdmin'));
 
 
 app.listen(SERVER_PORT, SERVER_HOST,()=>{

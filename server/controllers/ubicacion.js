@@ -63,7 +63,7 @@ const obtenerUbicaciones = async (req, res = response) => {
     if (!ubicaciones || ubicaciones.length === 0) {
       return res.json({
         ok: false,
-        msg: "Sin equipos existentes",
+        msg: "Sin ubicaciones existentes",
       });
     }
 
