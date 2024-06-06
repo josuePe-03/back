@@ -1,7 +1,11 @@
 const { response } = require("express");
+
 const VisitaIncidencia = require("../models/VisitaIncidencia");
 const Incidencias = require("../models/Incidencias");
 const RefaccionesVisita = require("../models/RefaccionesVisita");
+
+const Usuario = require("../models/Usuario");
+const jwt = require("jsonwebtoken");
 
 const crearVisitaIncidencia = async (req, res = response) => {
   const { id_incidencia } = req.body;
@@ -10,11 +14,6 @@ const crearVisitaIncidencia = async (req, res = response) => {
     //AGREGA VISITA
     let visitaIncidencia = new VisitaIncidencia(req.body);
     await visitaIncidencia.save();
-
-    //CAMBIAR ESTADO
-    const operador = await Incidencias.findOne({
-      id_incidencia: id_incidencia,
-    });
 
     if (!id_incidencia) {
       return res.status(404).json({
@@ -34,6 +33,7 @@ const crearVisitaIncidencia = async (req, res = response) => {
     res.status(201).json({
       ok: true,
       msg: "¡Visita agregada con exito!",
+      visitaIncidencia,
     });
   } catch (error) {
     console.log(error);
@@ -47,13 +47,22 @@ const crearVisitaIncidencia = async (req, res = response) => {
 //obtener todas
 const obtenerVisitaIncidencias = async (req, res = response) => {
   try {
+    //VERIFICACION POR TOKEN
+    const token = req.header("x-token");
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+
+    const usuario = await Usuario.findOne({
+      _id: uid,
+    });
+
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 4;
     const search = req.query.search || "";
 
     const visita = await VisitaIncidencia.find({
       estado: "Visita Pendiente",
-
+      centro_medico: usuario.centro_medico,
+      id_tecnico:uid
     })
       .populate({
         path: "id_incidencia",
@@ -90,9 +99,9 @@ const obtenerVisitaIncidencias = async (req, res = response) => {
       .limit(limit)
       .sort({ fecha_visita: 1 }); // Sort by fecha_visita in ascending order
 
-
     const total = await VisitaIncidencia.countDocuments({
       estado: "Visita Pendiente",
+      centro_medico: usuario.centro_medico,
     });
 
     //VALIDACION EXISTENCIA
@@ -138,7 +147,6 @@ const obtenerVisitasPorIncidencia = async (req, res = response) => {
         nombre: 1,
         apellidos: 1,
       });
-
 
     if (!visita_incidencia || visita_incidencia.length === 0) {
       return res.json({
@@ -208,7 +216,6 @@ const visitaProxima = async (req, res = response) => {
     { _id: 1 }
   );
   const incidenciaIdsArray = incidenciaIds.map((doc) => doc._id);
-
 
   //fecha hoy
   const today = new Date();
@@ -312,7 +319,8 @@ const terminarVisita = async (req, res = response) => {
         new: true,
       });
     } else if (estado == "Tecnico Asignado") {
-      const { id_incidencia, id_tecnicoAsignado, fecha_visita } = req.body;
+      const { id_incidencia, id_tecnicoAsignado, fecha_visita, centro_medico } =
+        req.body;
 
       const terminarVisita = {
         ...req.body,
@@ -336,6 +344,7 @@ const terminarVisita = async (req, res = response) => {
           id_incidencia.id_operador.unidad_medica +
           " Equipo " +
           id_incidencia.id_equipo.no_serie,
+        centro_medico: centro_medico,
       });
 
       await visitaIncidenciaNew.save();
@@ -346,6 +355,7 @@ const terminarVisita = async (req, res = response) => {
         fecha_visita,
         lista_refacciones,
         observacion,
+        centro_medico,
       } = req.body;
 
       const terminarVisita = {
@@ -369,6 +379,7 @@ const terminarVisita = async (req, res = response) => {
           id_incidencia.id_operador.unidad_medica +
           " Equipo " +
           id_incidencia.id_equipo.no_serie,
+        centro_medico: centro_medico,
       });
 
       await visitaIncidenciaNew.save();

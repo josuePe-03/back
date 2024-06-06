@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const Usuario = require('./Usuario');
+const CentroMedico = require('./CentroMedico');
 
 const OperadorSchema = Schema({
     nombre: {
@@ -29,6 +30,10 @@ const OperadorSchema = Schema({
     user: {
         type: Schema.Types.ObjectId, // Corrección aquí
         ref: Usuario  
+    },
+    centro_medico: {
+        type: Schema.Types.ObjectId, // Corrección aquí
+        ref: CentroMedico
     }
 });
 

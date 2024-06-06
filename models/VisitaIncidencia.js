@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose');
 const Tecnico = require('./Tecnico');
 const Incidencias = require('./Incidencias');
 const Equipo = require('./Equipo');
+const CentroMedico = require('./CentroMedico');
 
 const VisitaIncidenciasSchema = Schema({
     id_incidencia: {
@@ -40,6 +41,10 @@ const VisitaIncidenciasSchema = Schema({
         type: String,
         required: true,
     },
+    centro_medico: {
+        type: Schema.Types.ObjectId, // Corrección aquí
+        ref: CentroMedico
+    }
 });
 
 module.exports = model('VisitaIncidencias', VisitaIncidenciasSchema);
