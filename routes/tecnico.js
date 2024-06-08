@@ -1,7 +1,3 @@
-/*
-    Rutas de Usuarios / Auth
-    host + /api/auth
-*/
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -12,7 +8,7 @@ const { crearTecnico,eliminarTecnico, actualizarTecnico, obtenerTecnicos,obtener
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
-//router.use( validarJWT );
+router.use( validarJWT );
 
 router.post(
     '/agregar-tecnico', 

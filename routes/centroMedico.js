@@ -8,7 +8,7 @@ const { crearCentroMedico, obtenerCentrosMedicos } = require('../controllers/cen
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
-//router.use( validarJWT );
+router.use( validarJWT );
 
 // Crear un nuevo equipo
 router.post(

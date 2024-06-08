@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-//const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearIncidencia,
@@ -13,7 +13,7 @@ const {
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
-//router.use( validarJWT );
+router.use( validarJWT );
 
 // Crear un nueva incidencia
 router.post("/agregar-incidencia", [], crearIncidencia);
