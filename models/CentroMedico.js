@@ -12,7 +12,11 @@ const CentroMedicoSchema = Schema({
   direccion: {
     type: [String],
     required: true,
-  }
+  },
+  is_delete: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 module.exports = model("CentroMedico", CentroMedicoSchema);

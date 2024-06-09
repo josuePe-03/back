@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require('../middlewares/validar-campos');
-const { crearCentroMedico, obtenerCentrosMedicos } = require('../controllers/centromedico');
+const { eliminarCentroMedico,crearCentroMedico, obtenerCentrosMedicos, editarCentroMedico } = require('../controllers/centromedico');
 const { validarSuperAdmin } = require("../middlewares/validar-super-administradores");
 
 const router = Router();
@@ -29,5 +29,10 @@ router.get(
     '/obtener-centro-medico',
     obtenerCentrosMedicos
 );
+
+router.put("/eliminar-centro-medico/:id", eliminarCentroMedico);
+
+router.put("/editar-centro-medico/:id", editarCentroMedico);
+
 
 module.exports = router;

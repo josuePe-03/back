@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const CentroMedico = require('./CentroMedico');
+const CentroMedico = require("./CentroMedico");
 
 const ubicacionSchema = Schema({
   piso: {
@@ -12,8 +12,12 @@ const ubicacionSchema = Schema({
   },
   centro_medico: {
     type: Schema.Types.ObjectId, // Corrección aquí
-    ref: CentroMedico
-}
+    ref: CentroMedico,
+  },
+  is_delete: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 module.exports = model("Ubicacion", ubicacionSchema);

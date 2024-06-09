@@ -44,7 +44,11 @@ const VisitaIncidenciasSchema = Schema({
     centro_medico: {
         type: Schema.Types.ObjectId, // Corrección aquí
         ref: CentroMedico
-    }
+    },
+    is_delete: {
+        type: Boolean,
+        required: true
+    },
 });
 
 module.exports = model('VisitaIncidencias', VisitaIncidenciasSchema);

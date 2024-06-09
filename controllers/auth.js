@@ -2,7 +2,7 @@ const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
 const { generarJWT } = require("../helpers/jwt");
-const CentroMedico = require("../models/CentroMedico");
+const jwt = require("jsonwebtoken");
 
 const crearUsuario = async (req, res = response) => {
   const { email, password } = req.body;
@@ -92,7 +92,11 @@ const loginUsuario = async (req, res = response) => {
 };
 
 const revalidarToken = async (req, res = response) => {
-  const { uid, name } = req;
+  const tokenObtenido = req.header("x-token");
+  const { uid, nombre } = jwt.verify(
+    tokenObtenido,
+    process.env.SECRET_JWT_SEED
+  );
 
   const usuario = await Usuario.findOne({
     _id: uid,
@@ -102,7 +106,7 @@ const revalidarToken = async (req, res = response) => {
   });
 
   // Generar JWT
-  const token = await generarJWT(uid, name);
+  const token = await generarJWT(uid, nombre);
 
   res.json({
     ok: true,

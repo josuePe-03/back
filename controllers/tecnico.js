@@ -15,10 +15,9 @@ const crearTecnico = async (req, res = response) => {
     apellidos,
     direccion,
     edad,
-    unidad_medica,
-    is_delete,
     area,
     centro_medico,
+    fecha_creacion
   } = req.body;
 
   try {
@@ -31,7 +30,14 @@ const crearTecnico = async (req, res = response) => {
       });
     }
 
-    usuario = new Usuario(req.body);
+    usuario = new Usuario({
+      email:email,
+      nombre:nombre,
+      rol:2,
+      is_delete:false,
+      fecha_creacion:fecha_creacion,
+      centro_medico:centro_medico
+    });
 
     // Encriptar contraseña
     const salt = bcrypt.genSaltSync();
@@ -46,8 +52,8 @@ const crearTecnico = async (req, res = response) => {
       apellidos,
       direccion,
       edad,
-      unidad_medica,
-      is_delete,
+      unidad_medica:centro_medico,
+      is_delete:false,
       area,
       user: usuarioCreate._id,
       centro_medico,
