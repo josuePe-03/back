@@ -10,10 +10,14 @@ const {
   terminarIncidencia,
 } = require("../controllers/incidencias");
 
+const {validarOperadores } = require("../middlewares/validar-operadores");
+
+
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use( validarOperadores );
 
 // Crear un nueva incidencia
 router.post("/agregar-incidencia", [], crearIncidencia);

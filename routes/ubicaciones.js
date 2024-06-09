@@ -3,12 +3,14 @@ const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { crearUbicacion, obtenerUbicaciones, eliminarUbicacion } = require('../controllers/ubicacion');
-
+const {validarAdministradores} = require('../middlewares/validar-administradores')
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use(validarAdministradores);
+
 
 router.post(
     '/agregar-ubicacion', 

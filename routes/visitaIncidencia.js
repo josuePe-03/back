@@ -6,11 +6,14 @@ const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearVisitaIncidencia, obtenerVisitaIncidencias, obtenerVisitasPorIncidencia, obtenerVisita, visitaProxima, terminarVisita,
 } = require("../controllers/visitaIncidencia");
+const { validarTecnicos } = require('../middlewares/validar-tecnicos');
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use( validarTecnicos );
+
 
 // Crear un nueva visita incidencia
 router.post("/agregar-visita", [], crearVisitaIncidencia);

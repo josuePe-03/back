@@ -4,11 +4,13 @@ const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { crearCentroMedico, obtenerCentrosMedicos } = require('../controllers/centromedico');
+const { validarSuperAdmin } = require("../middlewares/validar-super-administradores");
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use( validarSuperAdmin );
 
 // Crear un nuevo equipo
 router.post(

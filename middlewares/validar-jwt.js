@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario");
 
 const validarJWT = async (req, res = response, next) => {
+
+  try {
   // x-token headers
   const token = req.header("x-token");
 
@@ -12,21 +14,6 @@ const validarJWT = async (req, res = response, next) => {
       msg: "No hay token en la petición",
     });
   }
-
-  try {
-    const { uid, name } = jwt.verify(token, process.env.SECRET_JWT_SEED);
-
-    req.uid = uid;
-    req.name = name;
-
-    // const usuario = await Usuario.findOne({ _id: uid, is_delete: false });
-
-    // if (usuario.rol !== "3") {
-    //   return res.status(401).json({
-    //     ok: false,
-    //     msg: "No tienes acceso",
-    //   });
-    // }
 
 
   } catch (error) {

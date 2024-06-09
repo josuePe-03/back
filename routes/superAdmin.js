@@ -9,11 +9,13 @@ const {
   obtenerAdministradores,
   obtenerAdministrador,
 } = require("../controllers/superAdmin");
+const { validarSuperAdmin } = require("../middlewares/validar-super-administradores");
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use( validarSuperAdmin );
 
 //ADMINISTRADORES
 router.get("/obtener-administradores", [], obtenerAdministradores);

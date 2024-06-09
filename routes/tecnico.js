@@ -3,12 +3,14 @@ const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { crearTecnico,eliminarTecnico, actualizarTecnico, obtenerTecnicos,obtenerTecnico } = require('../controllers/tecnico');
-
+const { validarAdministradores } = require('../middlewares/validar-administradores');
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
+router.use(validarAdministradores);
+
 
 router.post(
     '/agregar-tecnico', 
