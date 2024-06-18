@@ -93,6 +93,16 @@ const loginUsuario = async (req, res = response) => {
 
 const revalidarToken = async (req, res = response) => {
   const tokenObtenido = req.header("x-token");
+
+  
+  if (!tokenObtenido) {
+    return res.status(401).json({
+      ok: false,
+      msg: "No hay token en la petición",
+    });
+  }
+
+
   const { uid, nombre } = jwt.verify(
     tokenObtenido,
     process.env.SECRET_JWT_SEED

@@ -8,6 +8,8 @@ const SERVER_PORT = process.env.SERVER_PORT;
 
 // Crear el servidor de express
 const app = express();
+const path = require('path');
+
 
 // Base de datos
 dbConnection();
@@ -23,6 +25,20 @@ app.use( express.json() );
 
 // Rutas
 app.use('/api/auth', require('./routes/auth') );
+
+
+// Asumiendo que tienes una función de autenticación que devuelve el rol del usuario
+function authenticate(req, res, next) {
+
+    const tokenObtenido = req.header("x-token");
+
+    console.log(tokenObtenido)
+
+        next();
+
+}
+
+app.use('/uploads', authenticate, express.static(path.join(__dirname, 'uploads')));
 
 // ADMIN
 app.use('/api/operador', require('./routes/operador'));
