@@ -6,6 +6,7 @@ const Operador = require("../models/Operador");
 
 const Usuario = require("../models/Usuario");
 const jwt = require("jsonwebtoken");
+const { body } = require("express-validator");
 
 const resend = new Resend(process.env.KEY_RESEND);
 
@@ -18,6 +19,7 @@ const crearIncidencia = async (req, res = response) => {
     ubicacion,
     fecha_registrada,
     tipo_incidencia,
+    centro_medico
   } = req.body;
 
   try {
@@ -29,7 +31,18 @@ const crearIncidencia = async (req, res = response) => {
       select: { email: 1 },
     });
 
-    let incidencia = new Incidencias(req.body);
+    let incidencia = new Incidencias({
+      id_equipo:id_equipo,
+      id_operador:id_operador,
+      tipo_incidencia:tipo_incidencia,
+      detalle:detalle,
+      fecha_registrada:fecha_registrada,
+      status:status,
+      estado:"Pendiente",
+      ubicacion:ubicacion,
+      is_delete:false,
+      centro_medico:centro_medico
+    });
     await incidencia.save();
 
     const { data, error } = await resend.emails.send({
@@ -50,7 +63,7 @@ const crearIncidencia = async (req, res = response) => {
     res.status(201).json({
       ok: true,
       msg: "¡Incidencia agregada con exito!",
-      incidencia,
+      // incidencia,
     });
   } catch (error) {
     console.log(error);

@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
+const multer = require("multer");
 
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require("../middlewares/validar-campos");
@@ -12,6 +13,18 @@ const {
 
 const {validarOperadores } = require("../middlewares/validar-operadores");
 
+// Configuración de Multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 
 const router = Router();
 
@@ -19,8 +32,8 @@ const router = Router();
 router.use( validarJWT );
 router.use( validarOperadores );
 
-// Crear un nueva incidencia
-router.post("/agregar-incidencia", [], crearIncidencia);
+// Crear incidencia
+router.post("/agregar-incidencia", upload.single("image"),  crearIncidencia);
 
 // Obtener incidencias
 router.get("/obtener-incidencias", [], obtenerIncidencias);
