@@ -12,11 +12,9 @@ const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
-router.use( validarTecnicos );
-
 
 // Crear un nueva visita incidencia
-router.post("/agregar-visita", [], crearVisitaIncidencia);
+router.post("/agregar-visita", [validarTecnicos], crearVisitaIncidencia);
 
 //Obtener visita
 router.get("/obtener-visitas", [], obtenerVisitaIncidencias);
@@ -32,6 +30,5 @@ router.get("/visita-proxima/:id", [],visitaProxima);
 
 //Obtener visita
 router.put("/terminar-visita/:id", [],terminarVisita);
-
 
 module.exports = router;

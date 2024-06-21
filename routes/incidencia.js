@@ -30,10 +30,10 @@ const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
-router.use( validarOperadores );
+
 
 // Crear incidencia
-router.post("/agregar-incidencia", upload.single("image"),  crearIncidencia);
+router.post("/agregar-incidencia",[validarOperadores], upload.single("image"),  crearIncidencia);
 
 // Obtener incidencias
 router.get("/obtener-incidencias", [], obtenerIncidencias);
@@ -42,7 +42,7 @@ router.get("/obtener-incidencias", [], obtenerIncidencias);
 router.get("/obtener-incidencia/:id", [], obtenerIncidencia);
 
 //TERMINAR INCIDENCIA
-router.put("/terminar-incidencia/:id", [], terminarIncidencia);
+router.put("/terminar-incidencia/:id", [validarOperadores], terminarIncidencia);
 
 
 module.exports = router;

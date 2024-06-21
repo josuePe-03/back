@@ -10,7 +10,6 @@ const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
-router.use( validarAdministradores);
 
 // Crear un nuevo equipo
 router.post(

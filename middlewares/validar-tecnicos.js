@@ -10,7 +10,7 @@ const validarTecnicos = async (req, res = response, next) => {
 
     const usuario = await Usuario.findOne({ _id: uid, is_delete: false });
 
-    if (usuario.rol !== "1" && usuario.rol !== "2" && usuario.rol !== "3") {
+    if (usuario.rol !== "2") {
       return res.status(401).json({
         ok: false,
         msg: "No tienes acceso",
