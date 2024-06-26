@@ -17,7 +17,6 @@ const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use(validarJWT);
-router.use(validarAdministradores);
 
 router.post(
   "/agregar-operador",
@@ -31,20 +30,31 @@ router.post(
     check("password", "El password debe de ser de 6 caracteres").isLength({
       min: 6,
     }),
+    validarAdministradores,
     validarCampos,
   ],
   crearOperador
 );
 
 // Actualizar Operadoc
-router.put("/actualizar-operador/:id", [], actualizarOperador);
+router.put(
+  "/actualizar-operador/:id",
+  [],
+  validarAdministradores,
+  actualizarOperador
+);
 
 // Actualizar Operadoc
-router.get("/obtener-operadores", [], obtenerOperadores);
+router.get(
+  "/obtener-operadores",
+  [],
+  validarAdministradores,
+  obtenerOperadores
+);
 
 // Obtener Operador
 router.get("/obtener-operador/:id", [], obtenerOperador);
 
-router.put("/eliminar-operador/:id", eliminarOperador);
+router.put("/eliminar-operador/:id", validarAdministradores, eliminarOperador);
 
 module.exports = router;

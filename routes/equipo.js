@@ -25,6 +25,7 @@ router.post(
         check('id_admin','La id admin es obligatorio').not().isEmpty(),
         validarCampos
     ],
+    validarAdministradores,
     crearEquipo
 );
 
@@ -43,12 +44,14 @@ router.get(
 // Obtener equipo por id
 router.put(
     '/actualizar-equipo/:id',
+    validarAdministradores,
     actualizarEquipo
 );
 
 // Obtener equipo por id
 router.put(
     '/eliminar-equipo/:id',
+    validarAdministradores,
     eliminarEquipo
 );
 

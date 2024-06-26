@@ -26,7 +26,12 @@ const crearUbicacion = async (req, res = response) => {
     }
 
     // Si no se encuentra la ubicación, procede a guardarla
-    let ubicacionSave = new Ubicacion(req.body);
+    let ubicacionSave = new Ubicacion({
+      piso:piso,
+      no_sala:no_sala,
+      centro_medico:centro_medico,
+      is_delete:false
+    });
     await ubicacionSave.save();
 
     res.status(201).json({

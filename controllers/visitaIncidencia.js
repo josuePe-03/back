@@ -8,11 +8,23 @@ const Usuario = require("../models/Usuario");
 const jwt = require("jsonwebtoken");
 
 const crearVisitaIncidencia = async (req, res = response) => {
-  const { id_incidencia } = req.body;
+  const { id_incidencia,id_tecnico,id_tecnicoAsignado,id_equipo,fecha_revisado,fecha_visita,observacion,estado,title,centro_medico } = req.body;
 
   try {
     //AGREGA VISITA
-    let visitaIncidencia = new VisitaIncidencia(req.body);
+    let visitaIncidencia = new VisitaIncidencia({
+      id_incidencia:id_incidencia,
+      id_tecnico:id_tecnico,
+      id_tecnicoAsignado:id_tecnicoAsignado,
+      id_equipo:id_equipo,
+      fecha_revisado:fecha_revisado,
+      fecha_visita:fecha_visita,
+      observacion:observacion,
+      estado:estado,
+      title:title,
+      centro_medico:centro_medico,
+      is_delete:false
+    });
     await visitaIncidencia.save();
 
     if (!id_incidencia) {

@@ -9,8 +9,6 @@ const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
-router.use(validarAdministradores);
-
 
 router.post(
     '/agregar-ubicacion', 
@@ -19,6 +17,7 @@ router.post(
         check('no_sala', 'El No Piso es obligatorio').not().isEmpty(),
         validarCampos
     ],
+    validarAdministradores,
     crearUbicacion
 );
 
@@ -32,7 +31,7 @@ router.get(
 );
 
 
- router.delete('/eliminar-ubicacion/:id', eliminarUbicacion);
+ router.delete('/eliminar-ubicacion/:id', eliminarUbicacion,validarAdministradores);
 
 
 module.exports = router;

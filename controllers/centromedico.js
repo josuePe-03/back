@@ -114,6 +114,38 @@ const obtenerCentrosMedicos = async (req, res = response) => {
   }
 };
 
+const obtenerCentroMedico = async (req, res = response) => {
+  const centroMedicoId = req.params.id;
+
+  try {
+    const centroMedico = await CentroMedico.findOne({
+      _id: centroMedicoId,
+      is_delete: false,
+    });
+
+    if (!centroMedico) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Centro Medico no existe por ese id",
+      });
+    }
+
+
+    const response = {
+      ok: true,
+      centroMedico
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
 const editarCentroMedico = async (req, res = response) => {
   const centroMedicoId = req.params.id;
 
@@ -143,6 +175,7 @@ const editarCentroMedico = async (req, res = response) => {
     const response = {
       ok: true,
       centroMedicoActualizado,
+      msg:"Centro medico editado con exito"
     };
 
     res.status(200).json(response);
@@ -154,6 +187,7 @@ const editarCentroMedico = async (req, res = response) => {
     });
   }
 };
+
 const eliminarCentroMedico = async (req, res = response) => {
   const centroMedicoId = req.params.id;
 
@@ -237,4 +271,5 @@ module.exports = {
   crearCentroMedico,
   eliminarCentroMedico,
   obtenerCentrosMedicos,
+  obtenerCentroMedico
 };

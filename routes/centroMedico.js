@@ -3,14 +3,14 @@ const { check } = require('express-validator');
 
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarCampos } = require('../middlewares/validar-campos');
-const { eliminarCentroMedico,crearCentroMedico, obtenerCentrosMedicos, editarCentroMedico } = require('../controllers/centromedico');
+const { eliminarCentroMedico,crearCentroMedico, obtenerCentrosMedicos, editarCentroMedico, obtenerCentroMedico } = require('../controllers/centromedico');
 const { validarSuperAdmin } = require("../middlewares/validar-super-administradores");
 
 const router = Router();
 
 // Todas tienes que pasar por la validación del JWT
 router.use( validarJWT );
-router.use( validarSuperAdmin );
+
 
 // Crear un nuevo equipo
 router.post(
@@ -19,7 +19,8 @@ router.post(
         check('nombre','El nombre es obligatorio').not().isEmpty(),
         check('telefono','El telefono obligatorio').not().isEmpty(),
         check('direccion','La direccion es obligatorio').not().isEmpty(),
-        validarCampos
+        validarCampos,
+        validarSuperAdmin
     ],
     crearCentroMedico
 );
@@ -27,12 +28,20 @@ router.post(
 // Obtener equipo
 router.get(
     '/obtener-centro-medico',
+    validarSuperAdmin,
     obtenerCentrosMedicos
 );
 
-router.put("/eliminar-centro-medico/:id", eliminarCentroMedico);
+// Obtener equipo
+router.get(
+    '/obtener-centro-medico/:id',
+    validarSuperAdmin,
+    obtenerCentroMedico
+);
 
-router.put("/editar-centro-medico/:id", editarCentroMedico);
+router.put("/eliminar-centro-medico/:id",validarSuperAdmin, eliminarCentroMedico);
+
+router.put("/editar-centro-medico/:id",validarSuperAdmin, editarCentroMedico);
 
 
 module.exports = router;
