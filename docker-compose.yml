@@ -1,0 +1,39 @@
+services:
+  centro_medico_mongo:
+    image: mongo:6.0
+    container_name: centro_medico_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - centro_medico_mongo_data:/data/db
+    networks:
+      - centro_medico_net
+
+  centro_medico_api:
+    build: .
+    container_name: centro_medico_api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - centro_medico_mongo
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: >
+      sh -c "if [ \"$NODE_ENV\" = \"development\" ]; then npm run dev; else npm start; fi"
+    env_file:
+      - .env
+    networks:
+      - centro_medico_net
+      - centro_medico_proxy
+
+networks:
+  centro_medico_net:
+  centro_medico_proxy:
+    external: true
+
+volumes:
+  centro_medico_mongo_data:

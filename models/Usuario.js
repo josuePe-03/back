@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const CentroMedico = require('./CentroMedico');
 
 const UsuarioSchema = Schema({
     nombre: {
@@ -19,20 +18,18 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
-    is_delete:{
-        type:Boolean,
-        required:true
+    is_delete: {
+        type: Boolean,
+        default: false // Valor por defecto
     },
-    fecha_creacion:{
+    fecha_creacion: {
         type: String,
-        required: true
+        default: () => new Date().toISOString() // Fecha automática en formato ISO
     },
     centro_medico: {
-        type: Schema.Types.ObjectId, // Corrección aquí
-        ref: CentroMedico
+        type: Schema.Types.ObjectId,
+        ref: 'CentroMedico' // Ref debe ser el nombre del modelo como string
     }
 });
 
-
-module.exports = model('Usuario', UsuarioSchema );
-
+module.exports = model('Usuario', UsuarioSchema);
